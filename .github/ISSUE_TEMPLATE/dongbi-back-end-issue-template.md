@@ -8,8 +8,7 @@ assignees: ''
 ---
 
 ## 📌Feature Issue
----
+
 ## 📚 To-do
----
 - [] 할 일 1
 - [] 할 일 2
