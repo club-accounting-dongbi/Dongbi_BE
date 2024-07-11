@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ClubMembersService {
 
@@ -21,7 +22,7 @@ public class ClubMembersService {
     public void createClubMember(CreateClubMemberRequest member, Long generationId){
 
         Generation generation = generationRepository.findById(generationId)
-                .orElseThrow(() -> new NullPointerException("해당기수가 없습니다."));
+                .orElseThrow(() -> new RuntimeException("generation not found with generationId: " + generationId));
 
         ClubMembers clubMembers = ClubMembers.builder()
                 .generation(generation)
@@ -30,5 +31,12 @@ public class ClubMembersService {
         clubMembersRepository.save(clubMembers);
     }
 
-    
+    public void deleteClubMembers(Long clubmemberId) {
+        ClubMembers findMember = clubMembersRepository.findById(clubmemberId)
+                .orElseThrow(() -> new RuntimeException("Club member not found with clubmemberId: " + clubmemberId));
+        findMember.deleteClubMembers();
+        clubMembersRepository.save(findMember);
+    }
+   
+
 }

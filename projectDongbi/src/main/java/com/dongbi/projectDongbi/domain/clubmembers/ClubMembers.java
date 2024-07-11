@@ -40,7 +40,7 @@ public class ClubMembers {
     }
 
 
-    public ClubMembers deleteClubMembers(boolean del_flag){
+    public ClubMembers deleteClubMembers(){
         this.del_flag = !del_flag;
         return this;
     }
@@ -50,8 +50,6 @@ public class ClubMembers {
         this.withdraw = withdraw;
         return this;
     }
-
-
 
 
 }

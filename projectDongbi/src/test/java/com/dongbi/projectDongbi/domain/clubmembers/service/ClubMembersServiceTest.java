@@ -54,7 +54,12 @@ class ClubMembersServiceTest {
     }
 
     @Test
+    @Transactional
     void deleteClubMembers() {
+        ClubMembers findMember = clubMembersService.findById(clubMembers.getId());
+        Assertions.assertThat(findMember.isDel_flag()).isFalse();
+        ClubMembers deleteMember = findMember.deleteClubMembers();
+        Assertions.assertThat(deleteMember.isDel_flag()).isTrue();
     }
 
     @Test
