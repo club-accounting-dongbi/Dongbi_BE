@@ -207,3 +207,9 @@ gradle-app.setting
 ### Gradle Patch ###
 # Java heap dump
 *.hprof
+*.gradle
+*.properties
+projectDongbi/build.gradle
+projectDongbi/gradle/wrapper/gradle-wrapper.properties
+projectDongbi/gradlew
+projectDongbi/settings.gradle
