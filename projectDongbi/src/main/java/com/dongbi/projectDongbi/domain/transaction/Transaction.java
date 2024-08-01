@@ -1,6 +1,7 @@
 package com.dongbi.projectDongbi.domain.transaction;
 
 import com.dongbi.projectDongbi.domain.generation.Generation;
+import com.dongbi.projectDongbi.global.exception.TransactionException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -67,14 +68,11 @@ public class Transaction {
         this.occurrenceTime = occurrenceTime;
         this.personCharge = personCharge;
         this.reason = reason;
+        if(cash.subtract(withdrawal).compareTo(BigDecimal.ZERO) < 0) throw new TransactionException("보유금액이 0원보다 작을 수 없습니다.");
         this.cash = cash.subtract(withdrawal);
         generation.changeAmount(this.cash);
         this.imagePath = imagePath;
         this.banking = Banking.WITHDRAW;
-    }
-
-    private BigDecimal calculateCash(BigDecimal deposit, BigDecimal withdrawal) {
-        return deposit.subtract(withdrawal);
     }
 
 }
