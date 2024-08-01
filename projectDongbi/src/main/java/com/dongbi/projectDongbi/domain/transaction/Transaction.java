@@ -55,7 +55,7 @@ public class Transaction {
         this.withdrawal = BigDecimal.ZERO;
         this.reason = reason;
         this.occurrenceDate = LocalDate.now();
-        this.occurrenceTime = LocalTime.now();
+        this.occurrenceTime = LocalTime.of(LocalTime.now().getHour(),LocalTime.now().getMinute());
         this.banking = Banking.DEPOSIT;
         this.personCharge = personCharge;
     }
