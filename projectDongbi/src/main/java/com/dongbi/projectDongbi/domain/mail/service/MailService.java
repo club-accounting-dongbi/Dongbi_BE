@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,29 +19,20 @@ public class MailService {
         number = (int)(Math.random() * 90000) + 100000;
     }
 
-    public MimeMessage CreateMail(String mail){
-        createNumber();
-        MimeMessage message = javaMailSender.createMimeMessage();
-
+    public boolean sendMail(String to, String otp) {
         try {
-            System.out.println(mail);
-            message.setFrom(senderEmail);
-            message.setRecipients(MimeMessage.RecipientType.TO, mail);
-            message.setSubject("이메일 인증");
-            String body = "";
-            body += "<h3>" + "요청하신 이메일 인증 번호입니다." + "</h3>";
-            body += "<h1>" + number + "</h1>";
-            body += "<h3>" + "감사합니다." + "</h3>";
-            message.setText(body,"UTF-8", "html");
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject("[Dongbi] 이메일 인증 번호");
+            helper.setText("인증 번호: " + otp, true);
+
+            javaMailSender.send(message);
+            return true;
         } catch (MessagingException e) {
             e.printStackTrace();
+            return false;
         }
-        return message;
-    }
-
-    public int sendMail(String mail){
-        MimeMessage message = CreateMail(mail);
-        javaMailSender.send(message);
-        return number;
     }
 }
