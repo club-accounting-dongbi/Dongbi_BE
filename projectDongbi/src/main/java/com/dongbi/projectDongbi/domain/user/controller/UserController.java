@@ -16,7 +16,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/clubs")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 
