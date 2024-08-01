@@ -36,7 +36,7 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return user.getEmail();
     }
 
     @Override
@@ -58,5 +58,9 @@ public class PrincipalDetails implements UserDetails {
     public boolean isEnabled() {
         //추후 휴면계정 기능 넣을 때 사용
         return true;
+    }
+
+    public User getUser() {
+        return this.user;
     }
 }
