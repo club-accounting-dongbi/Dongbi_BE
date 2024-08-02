@@ -1,9 +1,7 @@
 package com.dongbi.projectDongbi.domain.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.dongbi.projectDongbi.domain.club.Club;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -20,4 +18,8 @@ public class User {
     private String email;
     private String password;
     private String role;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "club_id", referencedColumnName = "id")
+    private Club club;
 }

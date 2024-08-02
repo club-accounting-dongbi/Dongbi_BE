@@ -1,6 +1,7 @@
 package com.dongbi.projectDongbi.domain.user.service;
 
 import com.dongbi.projectDongbi.config.auth.PrincipalDetails;
+import com.dongbi.projectDongbi.domain.club.Club;
 import com.dongbi.projectDongbi.domain.user.User;
 import com.dongbi.projectDongbi.domain.user.repository.UserRepository;
 import com.dongbi.projectDongbi.web.dto.user.LoginRequestDto;
@@ -28,10 +29,15 @@ public class UserService {
 
         String encPassword = bCryptPasswordEncoder.encode(signupRequestDto.getPassword());
 
+        Club club = Club.builder()
+                .name(signupRequestDto.getClubname())
+                .build();
+
         User user = User.builder()
                 .role("ROLE_USER")
                 .email(signupRequestDto.getEmail())
                 .password(encPassword)
+                .club(club)
                 .build();
 
         return userRepository.save(user);
