@@ -49,6 +49,7 @@ public class TransactionRepositoryImpl implements TransactionCustomRepository{
                         chkBanking(request.getBanking()),
                         searchReason(request.getReason())
                 )
+                .orderBy(transaction.occurrenceDate.desc(),transaction.occurrenceTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
