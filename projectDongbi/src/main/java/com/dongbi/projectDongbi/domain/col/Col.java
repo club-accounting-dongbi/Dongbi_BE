@@ -1,6 +1,7 @@
-package com.dongbi.projectDongbi.domain.row;
+package com.dongbi.projectDongbi.domain.col;
 
 import com.dongbi.projectDongbi.domain.generation.Generation;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class Col {
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "generation_id")
     Generation generation;
 
