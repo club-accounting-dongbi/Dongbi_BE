@@ -22,4 +22,8 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "club_id", referencedColumnName = "id")
     private Club club;
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
