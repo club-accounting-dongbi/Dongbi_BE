@@ -55,7 +55,7 @@ public class Transaction {
         this.withdrawal = BigDecimal.ZERO;
         this.reason = reason;
         this.occurrenceDate = LocalDate.now();
-        this.occurrenceTime = LocalTime.now();
+        this.occurrenceTime = LocalTime.of(LocalTime.now().getHour(),LocalTime.now().getMinute());
         this.banking = Banking.DEPOSIT;
         this.personCharge = personCharge;
     }
@@ -68,11 +68,15 @@ public class Transaction {
         this.occurrenceTime = occurrenceTime;
         this.personCharge = personCharge;
         this.reason = reason;
-        if(cash.subtract(withdrawal).compareTo(BigDecimal.ZERO) < 0) throw new TransactionException("보유금액이 0원보다 작을 수 없습니다.");
+        if(cash.subtract(withdrawal).compareTo(BigDecimal.ZERO) < 0) throw new TransactionException("보유금액보다 지출금액이 클 수 없습니다.");
         this.cash = cash.subtract(withdrawal);
         generation.changeAmount(this.cash);
         this.imagePath = imagePath;
         this.banking = Banking.WITHDRAW;
+    }
+
+    private BigDecimal calculateCash(BigDecimal deposit, BigDecimal withdrawal) {
+        return deposit.subtract(withdrawal);
     }
 
 }

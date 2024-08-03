@@ -5,17 +5,14 @@ import com.dongbi.projectDongbi.domain.clubmembers.repository.ClubMemberReposito
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.domain.generation.repository.GenerationRepository;
 import com.dongbi.projectDongbi.domain.paid.service.PaidService;
+import com.dongbi.projectDongbi.web.clubmembers.dto.request.CreateClubMemberRequest;
 import com.dongbi.projectDongbi.web.clubmembers.dto.request.SearchClubMemberRequest;
 import com.dongbi.projectDongbi.web.clubmembers.dto.request.UpdateClubMemberRequest;
 import com.dongbi.projectDongbi.web.clubmembers.dto.response.ClubMemberResponse;
-import com.dongbi.projectDongbi.web.clubmembers.dto.request.CreateClubMemberRequest;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -32,14 +29,12 @@ public class ClubMemberService {
     public void createClubMember(CreateClubMemberRequest request){
 
         Generation generation = generationRepository.findGenerationByClubIdAndGenerationNum(request.clubId(),request.generationNum());
-        if(request.names().isEmpty()) throw new RuntimeException("이름을 적어주세요.");
-        if(clubMemberRepository.existsByMember(request) == request.names().size()) throw new DuplicateRequestException("중복된 이름이 있습니다.");
+       if(request.names().isEmpty()) throw new RuntimeException("이름을 적어주세요.");
+
 
         for (String name : request.names()) {
-            ClubMember clubMember = ClubMember.builder()
-                    .generation(generation)
-                    .name(name)
-                    .build();
+            if(clubMemberRepository.existsByMember(request, name) > 0) throw new DuplicateRequestException("중복된 이름이 있습니다.");
+            ClubMember clubMember = ClubMember.createClubMember(name,generation);
             clubMemberRepository.save(clubMember);
         }
     }
@@ -62,12 +57,10 @@ public class ClubMemberService {
     }
 
     public List<ClubMemberResponse> findGenerationClubMembers(SearchClubMemberRequest request) {
-
-        if(request.getClubId() == null || request.getGenerationNum() == null){
+      if(request.getClubId() == null || request.getGenerationNum() == null){
             throw  new NoSuchElementException("클럽Id나 기수번호가 잘못되었습니다.");
         }
         return clubMemberRepository.findByClubIdAndGenerationNum(request);
     }
-
 
 }

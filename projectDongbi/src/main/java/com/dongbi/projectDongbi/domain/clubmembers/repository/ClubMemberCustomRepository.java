@@ -14,7 +14,7 @@ public interface ClubMemberCustomRepository {
     ClubMember findByClubIdAndName(Long clubId, String name);
 
 
-    Long existsByMember(CreateClubMemberRequest request);
+    Long existsByMember(CreateClubMemberRequest request, String name);
 
 }
 

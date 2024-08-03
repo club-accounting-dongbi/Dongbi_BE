@@ -81,12 +81,12 @@ public class ClubMemberCustomRepositoryImpl implements ClubMemberCustomRepositor
     }
 
     @Override
-    public Long existsByMember(CreateClubMemberRequest request) {
+    public Long existsByMember(CreateClubMemberRequest request, String name) {
 
         return queryFactory.select(clubMember.count())
                 .from(clubMember)
                 .join(clubMember.generation, generation).on(generation.club.id.eq(request.clubId()))
-                .where(clubMember.name.in(request.names()))
+                .where(clubMember.name.eq(name))
                 .fetchOne();
     }
 
