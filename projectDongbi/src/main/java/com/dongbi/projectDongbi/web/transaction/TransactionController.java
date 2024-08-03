@@ -3,6 +3,7 @@ package com.dongbi.projectDongbi.web.transaction;
 import com.dongbi.projectDongbi.domain.common.file.File;
 import com.dongbi.projectDongbi.domain.common.file.service.FileService;
 import com.dongbi.projectDongbi.domain.transaction.service.TransactionService;
+import com.dongbi.projectDongbi.global.exception.TransactionException;
 import com.dongbi.projectDongbi.web.transaction.dto.request.DepositRequest;
 import com.dongbi.projectDongbi.web.transaction.dto.request.TransactionConditionRequest;
 import com.dongbi.projectDongbi.web.transaction.dto.request.WithDrawalRequest;
@@ -26,7 +27,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -88,16 +88,18 @@ public class TransactionController {
     public ResponseEntity<byte[]> downloadTransaction(@PathVariable String type, @RequestBody TransactionConditionRequest request,
                                                       @PageableDefault(size = 10, sort = "occurence_date",direction = Sort.Direction.ASC) Pageable pageable) throws IOException{
     Page<TransactionBankingResponse> result = transactionService.getTransactionList(request, pageable);
-        List<TransactionBankingResponse> responseList = result.getContent();
 
+        if(result.getContent().isEmpty()){
+            throw new TransactionException("입출금내역이 없습니다.");
+        }
         if(type.equals("excel")){
-            byte[] excelContent = fileService.generateExcel(responseList);
+            byte[] excelContent = fileService.generateExcel(result);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"transactions.xlsx\"")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(excelContent);
         }else if(type.equals("pdf")){
-            byte[] pdfContent = fileService.generatePdf(responseList);
+            byte[] pdfContent = fileService.generatePdf(result);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"transactions.pdf\"")
