@@ -1,6 +1,7 @@
 package com.dongbi.projectDongbi.web.clubmembers;
 
 import com.dongbi.projectDongbi.domain.clubmembers.service.ClubMemberService;
+import com.dongbi.projectDongbi.web.clubmembers.dto.request.SearchClubMemberRequest;
 import com.dongbi.projectDongbi.web.clubmembers.dto.request.UpdateClubMemberRequest;
 import com.dongbi.projectDongbi.web.clubmembers.dto.response.ClubMemberResponse;
 import com.dongbi.projectDongbi.web.clubmembers.dto.request.CreateClubMemberRequest;
@@ -23,16 +24,12 @@ public class ClubMemberController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{generationNum}")
-    public  ResponseEntity<List<ClubMemberResponse>> findAllClubMembers(Long clubId,  @PathVariable Long generationNum){
-        List<ClubMemberResponse> result = clubMemberService.findGenerationClubMembers(clubId, generationNum);
-        return ResponseEntity.ok(result);
-    }
 
 
-    @GetMapping("/active/{generationNum}")
-    public  ResponseEntity<List<ClubMemberResponse>> findActiveClubMembers(Long clubId,  @PathVariable Long generationNum){
-        List<ClubMemberResponse> result = clubMemberService.findGenerationClubMembers(clubId, generationNum);
+    @GetMapping("/active")
+    public  ResponseEntity<List<ClubMemberResponse>> findActiveClubMembers(@RequestBody SearchClubMemberRequest request){
+
+        List<ClubMemberResponse> result = clubMemberService.findGenerationClubMembers(request);
         return ResponseEntity.ok(result);
     }
 
