@@ -3,9 +3,11 @@ package com.dongbi.projectDongbi.domain.clubmembers.repository;
 import com.dongbi.projectDongbi.domain.clubmembers.ClubMember;
 import com.dongbi.projectDongbi.domain.paid.Paid;
 import com.dongbi.projectDongbi.web.clubmembers.dto.request.CreateClubMemberRequest;
+import com.dongbi.projectDongbi.web.clubmembers.dto.request.SearchClubMemberRequest;
 import com.dongbi.projectDongbi.web.clubmembers.dto.response.ClubMemberResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,19 +20,20 @@ import static com.dongbi.projectDongbi.domain.paid.QPaid.paid1;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class ClubMemberCustomRepositoryImpl implements ClubMemberCustomRepository{
 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ClubMemberResponse> findByClubIdAndGenerationNum(Long clubId, Long generationNum) {
+    public List<ClubMemberResponse> findByClubIdAndGenerationNum(SearchClubMemberRequest request) {
 
         List<ClubMember> members = queryFactory
                 .selectFrom(clubMember)
-                .join(clubMember.generation, generation)
+                .join(clubMember.generation, generation).fetchJoin()
                 .where(
-                        club.id.eq(clubId),
-                        generation.generationNum.eq(generationNum),
+                        club.id.eq(request.getClubId()),
+                        generation.generationNum.eq(request.getGenerationNum()),
                                 clubMember.delFlag.isFalse()
 
                 )
@@ -39,18 +42,17 @@ public class ClubMemberCustomRepositoryImpl implements ClubMemberCustomRepositor
 
         List<Paid> paidList = queryFactory
                 .selectFrom(paid1)
-                .join(paid1.clubMember, clubMember)
+                .join(paid1.clubMember, clubMember).fetchJoin()
                 .where(
-                        clubMember.generation.id.in(
-                                members.stream().map(member -> member.getGeneration().getId()).collect(Collectors.toList())
+                       paid1.clubMember.in(
+                               members
                         )
                 )
                 .fetch();
-
         return members.stream()
                 .map(member -> {
                     List<Paid> memberPays = paidList.stream()
-                            .filter(p -> p.getClubMember().equals(member))
+                            .filter(p -> p.getClubMember().getId().equals(member.getId()))
                             .collect(Collectors.toList());
 
                     return new ClubMemberResponse(
@@ -79,12 +81,12 @@ public class ClubMemberCustomRepositoryImpl implements ClubMemberCustomRepositor
     }
 
     @Override
-    public Long existsByMember(CreateClubMemberRequest request) {
+    public Long existsByMember(CreateClubMemberRequest request, String name) {
 
         return queryFactory.select(clubMember.count())
                 .from(clubMember)
                 .join(clubMember.generation, generation).on(generation.club.id.eq(request.clubId()))
-                .where(clubMember.name.in(request.names()))
+                .where(clubMember.name.eq(name))
                 .fetchOne();
     }
 

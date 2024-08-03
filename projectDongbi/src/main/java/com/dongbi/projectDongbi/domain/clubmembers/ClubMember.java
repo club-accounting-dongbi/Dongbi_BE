@@ -2,20 +2,17 @@ package com.dongbi.projectDongbi.domain.clubmembers;
 
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.domain.paid.Paid;
-import com.dongbi.projectDongbi.domain.paid.repository.PaidRepository;
 import com.dongbi.projectDongbi.web.clubmembers.dto.request.UpdateClubMemberRequest;
-import com.dongbi.projectDongbi.web.paid.dto.PaidRequest;
 import jakarta.persistence.*;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ClubMember {
 
@@ -42,15 +39,15 @@ public class ClubMember {
     private Boolean actFlag;
 
 
-    @Builder
-    public ClubMember(String name, Generation generation){
 
-        this.name = name;
-        this.generation = generation;
-        this.delFlag = false;
-        this.actFlag = false;
+    public static ClubMember createClubMember(String name, Generation generation){
+        ClubMember cm = new ClubMember();
+        cm.name = name;
+        cm.generation = generation;
+        cm.delFlag = false;
+        cm.actFlag = false;
+        return cm;
     }
-
 
     public void updateClubMember(UpdateClubMemberRequest request) {
         if(request.getDelFlag() != null){
