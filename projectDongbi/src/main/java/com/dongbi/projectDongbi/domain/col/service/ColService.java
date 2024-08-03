@@ -20,7 +20,7 @@ public class ColService {
     public void generateCol(List<ColGenerateRequest> requests) {
         for (ColGenerateRequest request : requests) {
             Generation generation = generationService.getGeneration(request.getClubId(), request.getGenerationNum());
-            Col col = new Col(request.getColName(), request.getPrice(),generation);
+            Col col = Col.createCol(request.getColName(), request.getPrice(),generation);
             colRepository.save(col);
         }
 

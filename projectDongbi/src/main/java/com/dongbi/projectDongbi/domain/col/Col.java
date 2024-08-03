@@ -27,10 +27,12 @@ public class Col {
     @JoinColumn(name = "generation_id")
     Generation generation;
 
-    public Col(String colName, BigDecimal price, Generation generation) {
-        this.colName = colName;
-        this.price = price;
-        this.generation = generation;
+    public static Col createCol(String colName, BigDecimal price, Generation generation) {
+        Col col = new Col();
+        col.colName = colName;
+        col.price = price;
+        col.generation = generation;
+        return col;
     }
 
 
