@@ -17,13 +17,6 @@ public class ClubMemberResponse {
     private Boolean act_flag;
 
 
-//    public ClubMemberResponse(ClubMember member) {
-//        this.generation = member.getGeneration();
-//        this.names = member.getName();
-//        this.del_flag = member.isDelFlag();
-//        this.pay = member.getPay();
-//    }
-
     @QueryProjection
     public ClubMemberResponse(Generation generation, String name, List<Paid> pay, Boolean del_flag,Boolean act_flag) {
         this.generation = generation;
