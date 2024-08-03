@@ -3,6 +3,7 @@ package com.dongbi.projectDongbi.domain.transaction;
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.global.exception.TransactionException;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +13,7 @@ import java.time.LocalTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Transaction {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,36 +48,36 @@ public class Transaction {
 
     private String imagePath;
 
-    public Transaction(Generation generation, BigDecimal deposit, String reason, String personCharge, BigDecimal cash) {
-        this.cash = cash.add(deposit);
-        generation.changeAmount(this.cash);
-        this.generation = generation;
-        this.deposit = deposit;
-        this.withdrawal = BigDecimal.ZERO;
-        this.reason = reason;
-        this.occurrenceDate = LocalDate.now();
-        this.occurrenceTime = LocalTime.of(LocalTime.now().getHour(),LocalTime.now().getMinute());
-        this.banking = Banking.DEPOSIT;
-        this.personCharge = personCharge;
+    public static Transaction depositTransaction(Generation generation, BigDecimal deposit, String reason, String personCharge, BigDecimal cash) {
+        Transaction tr = new Transaction();
+        tr.cash = cash.add(deposit);
+        generation.changeAmount(tr.cash);
+        tr.generation = generation;
+        tr.deposit = deposit;
+        tr.withdrawal = BigDecimal.ZERO;
+        tr.reason = reason;
+        tr.occurrenceDate = LocalDate.now();
+        tr.occurrenceTime = LocalTime.of(LocalTime.now().getHour(),LocalTime.now().getMinute());
+        tr.banking = Banking.DEPOSIT;
+        tr.personCharge = personCharge;
+        return tr;
     }
 
-    public Transaction(Generation generation,BigDecimal withdrawal, LocalDate occurrenceDate, LocalTime occurrenceTime, String personCharge, String reason, BigDecimal cash, String imagePath) {
-        this.withdrawal = withdrawal;
-        this.generation = generation;
-        this.deposit = BigDecimal.ZERO;
-        this.occurrenceDate = occurrenceDate;
-        this.occurrenceTime = occurrenceTime;
-        this.personCharge = personCharge;
-        this.reason = reason;
+    public static Transaction withdrawalTransaction(Generation generation,BigDecimal withdrawal, LocalDate occurrenceDate, LocalTime occurrenceTime, String personCharge, String reason, BigDecimal cash, String imagePath) {
+        Transaction tr = new Transaction();
+        tr.withdrawal = withdrawal;
+        tr.generation = generation;
+        tr.deposit = BigDecimal.ZERO;
+        tr.occurrenceDate = occurrenceDate;
+        tr.occurrenceTime = occurrenceTime;
+        tr.personCharge = personCharge;
+        tr.reason = reason;
         if(cash.subtract(withdrawal).compareTo(BigDecimal.ZERO) < 0) throw new TransactionException("보유금액보다 지출금액이 클 수 없습니다.");
-        this.cash = cash.subtract(withdrawal);
-        generation.changeAmount(this.cash);
-        this.imagePath = imagePath;
-        this.banking = Banking.WITHDRAW;
-    }
-
-    private BigDecimal calculateCash(BigDecimal deposit, BigDecimal withdrawal) {
-        return deposit.subtract(withdrawal);
+        tr.cash = cash.subtract(withdrawal);
+        generation.changeAmount(tr.cash);
+        tr.imagePath = imagePath;
+        tr.banking = Banking.WITHDRAW;
+        return tr;
     }
 
 }
