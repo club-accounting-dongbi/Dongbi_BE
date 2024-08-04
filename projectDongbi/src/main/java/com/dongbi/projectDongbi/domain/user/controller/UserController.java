@@ -1,14 +1,13 @@
 package com.dongbi.projectDongbi.domain.user.controller;
 
+import com.dongbi.projectDongbi.config.auth.PrincipalDetails;
 import com.dongbi.projectDongbi.domain.user.User;
 import com.dongbi.projectDongbi.domain.user.service.UserService;
-import com.dongbi.projectDongbi.web.dto.user.LoginRequestDto;
-import com.dongbi.projectDongbi.web.dto.user.SignupRequestDto;
-import com.dongbi.projectDongbi.web.dto.user.UserMapper;
-import com.dongbi.projectDongbi.web.dto.user.UserResponseDto;
+import com.dongbi.projectDongbi.web.dto.user.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,6 +21,11 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+
+    @PostMapping("/token")
+    public String token(){
+        return "<h1>token</h1>";
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> clubsLogin(@RequestBody LoginRequestDto loginRequestDto) {
@@ -45,6 +49,20 @@ public class UserController {
             return ResponseEntity.ok(Map.of("message", "회원 가입 성공"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<Map<String, Object>> updatePassword(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestBody UpdatePasswordRequestDto updatePasswordRequestDto){
+        userService.updatePassword(principalDetails.getUser().getId(), updatePasswordRequestDto);
+
+        try {
+            userService.updatePassword(principalDetails.getUser().getId(), updatePasswordRequestDto);
+            return ResponseEntity.ok(Map.of("message", "비밀번호 변경 성공"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.ok(Map.of("message", e.getMessage()));
         }
     }
 

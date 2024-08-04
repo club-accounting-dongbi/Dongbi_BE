@@ -12,6 +12,7 @@ public class UserMapperImpl implements UserMapper{
                 .id(user.getId())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .clubname(user.getClub().getName())
                 .build();
         return userResponseDto;
     }
