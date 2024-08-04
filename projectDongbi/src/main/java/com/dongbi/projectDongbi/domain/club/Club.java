@@ -19,4 +19,8 @@ public class Club {
     @Column(nullable = false)
     private String name;
 
+
+    public void updateName(String name){
+        this.name = name;
+    }
 }
