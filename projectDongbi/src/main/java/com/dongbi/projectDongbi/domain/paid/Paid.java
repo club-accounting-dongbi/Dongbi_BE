@@ -1,7 +1,9 @@
 package com.dongbi.projectDongbi.domain.paid;
 
 import com.dongbi.projectDongbi.domain.clubmembers.ClubMember;
-import com.dongbi.projectDongbi.domain.row.Col;
+import com.dongbi.projectDongbi.domain.col.Col;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Paid {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "paid_id")
@@ -20,11 +23,13 @@ public class Paid {
     private Boolean paid;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "club_member_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private ClubMember clubMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "col_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JsonIgnore
     private Col col;
 
 

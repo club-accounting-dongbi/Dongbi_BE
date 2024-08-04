@@ -1,13 +1,11 @@
 package com.dongbi.projectDongbi.domain.transaction;
 
 import com.dongbi.projectDongbi.domain.generation.Generation;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import com.dongbi.projectDongbi.global.exception.TransactionException;
 import jakarta.persistence.*;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,7 +13,7 @@ import java.time.LocalTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Transaction {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,19 +23,19 @@ public class Transaction {
     @JoinColumn(name = "generation_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Generation generation;
 
-    @Column(name = "Deposit", columnDefinition = "decimal default 0")
+    @Column(name = "Deposit",  columnDefinition = "decimal default 0")
     private BigDecimal deposit;
 
     @Column(name = "withdrawal", columnDefinition = "decimal default 0")
     private BigDecimal withdrawal;
 
     @Column(name = "occurence_date", nullable = false)
-    private LocalDate occurrence_date;
+    private LocalDate occurrenceDate;
     @Column(name = "occurrence_time", nullable = false)
-    private LocalTime occurrence_time;
+    private LocalTime occurrenceTime;
 
     @Column(name = "person_charge", length = 10)
-    private String person_charge;
+    private String personCharge;
 
     @Column(name = "reason", length = 50)
     private String reason;
@@ -45,26 +43,41 @@ public class Transaction {
     private BigDecimal cash;
 
     @Column(name = "banking", nullable = false)
-    private boolean banking;
+    @Enumerated(EnumType.STRING)
+    private Banking banking;
 
-    @Column(name = "imagePath", length = 30)
     private String imagePath;
 
-    public Transaction(Generation generation, BigDecimal deposit, BigDecimal withdrawal,
-                       LocalDate occurrence_date, LocalTime occurrence_time,
-                       String person_charge, String reason, BigDecimal cash) {
-        this.generation = generation;
-        this.deposit = deposit;
-        this.withdrawal = withdrawal;
-        this.occurrence_date = occurrence_date;
-        this.occurrence_time = occurrence_time;
-        this.person_charge = person_charge;
-        this.reason = reason;
-        this.cash = cash.add(deposit).subtract(withdrawal);
-        this.banking = deposit.compareTo(BigDecimal.ZERO) > 0;
+    public static Transaction depositTransaction(Generation generation, BigDecimal deposit, String reason, String personCharge, BigDecimal cash) {
+        Transaction tr = new Transaction();
+        tr.cash = cash.add(deposit);
+        generation.changeAmount(tr.cash);
+        tr.generation = generation;
+        tr.deposit = deposit;
+        tr.withdrawal = BigDecimal.ZERO;
+        tr.reason = reason;
+        tr.occurrenceDate = LocalDate.now();
+        tr.occurrenceTime = LocalTime.of(LocalTime.now().getHour(),LocalTime.now().getMinute());
+        tr.banking = Banking.DEPOSIT;
+        tr.personCharge = personCharge;
+        return tr;
     }
-    private BigDecimal calculateCash(BigDecimal deposit, BigDecimal withdrawal) {
-        return deposit.subtract(withdrawal);
+
+    public static Transaction withdrawalTransaction(Generation generation,BigDecimal withdrawal, LocalDate occurrenceDate, LocalTime occurrenceTime, String personCharge, String reason, BigDecimal cash, String imagePath) {
+        Transaction tr = new Transaction();
+        tr.withdrawal = withdrawal;
+        tr.generation = generation;
+        tr.deposit = BigDecimal.ZERO;
+        tr.occurrenceDate = occurrenceDate;
+        tr.occurrenceTime = occurrenceTime;
+        tr.personCharge = personCharge;
+        tr.reason = reason;
+        if(cash.subtract(withdrawal).compareTo(BigDecimal.ZERO) < 0) throw new TransactionException("보유금액보다 지출금액이 클 수 없습니다.");
+        tr.cash = cash.subtract(withdrawal);
+        generation.changeAmount(tr.cash);
+        tr.imagePath = imagePath;
+        tr.banking = Banking.WITHDRAW;
+        return tr;
     }
 
 }
