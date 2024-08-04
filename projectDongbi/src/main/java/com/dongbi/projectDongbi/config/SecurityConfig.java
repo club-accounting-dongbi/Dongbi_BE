@@ -16,11 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig{
 
     @Bean
-    public BCryptPasswordEncoder encodePwd(){
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.disable())

@@ -5,6 +5,6 @@ import com.dongbi.projectDongbi.domain.generation.Generation;
 public interface GenerationCustomRepository {
 
 
-    Generation findByClubMemberIdAndGenerationNum(Long clubId, Long generationNum);
+    Generation findByClubMemberIdAndGenerationNum(Long userId, Long generationNum);
 
 }

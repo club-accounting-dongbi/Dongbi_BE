@@ -31,7 +31,7 @@ public class ClubMemberService {
     public void createClubMember(CreateClubMemberRequest request){
 
         Generation generation = generationRepository.findGenerationByClubIdAndGenerationNum(request.clubId(),request.generationNum());
-       if(request.names().isEmpty()) throw new RuntimeException("이름을 적어주세요.");
+        if(request.names().isEmpty()) throw new RuntimeException("이름을 적어주세요.");
 
 
         for (String name : request.names()) {

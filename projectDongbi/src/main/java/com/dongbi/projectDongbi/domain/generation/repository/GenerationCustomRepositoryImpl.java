@@ -17,12 +17,12 @@ public class GenerationCustomRepositoryImpl implements GenerationCustomRepositor
 
 
     @Override
-    public Generation findByClubMemberIdAndGenerationNum(Long clubId, Long generationNum) {
+    public Generation findByClubMemberIdAndGenerationNum(Long userId, Long generationNum) {
 
         QGeneration subGeneration = new QGeneration("subGeneration");
         return queryFactory.select(generation)
                 .from(generation)
-                .join(generation.club, club).on(club.id.eq(clubId))
+//                .join(generation.club, club).on(club.user.id.eq(userId))
                 .where(
                         generation.generationNum.eq(generationNum)
                 )
