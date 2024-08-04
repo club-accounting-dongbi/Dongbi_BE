@@ -1,5 +1,7 @@
 package com.dongbi.projectDongbi.domain.club;
 
+import com.dongbi.projectDongbi.domain.generation.Generation;
+import com.dongbi.projectDongbi.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +20,6 @@ public class Club {
 
     @Column(nullable = false)
     private String name;
-
 
     public void updateName(String name){
         this.name = name;
