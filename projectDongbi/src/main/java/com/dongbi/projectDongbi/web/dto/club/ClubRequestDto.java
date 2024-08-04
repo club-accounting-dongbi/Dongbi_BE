@@ -1,4 +1,4 @@
-package com.dongbi.projectDongbi.web.dto.user;
+package com.dongbi.projectDongbi.web.dto.club;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignupRequestDto {
-
-    private String email;
-    private String password;
-    private String clubname;
+public class ClubRequestDto {
+    private Long id;
+    private String clubName;
 }
