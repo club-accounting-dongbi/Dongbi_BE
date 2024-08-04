@@ -25,7 +25,7 @@ public class Col {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "generation_id")
-    Generation generation;
+    private Generation generation;
 
     public static Col createCol(String colName, BigDecimal price, Generation generation) {
         Col col = new Col();
