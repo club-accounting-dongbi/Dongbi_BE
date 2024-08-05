@@ -1,4 +1,4 @@
-package com.dongbi.projectDongbi.config;
+package com.dongbi.projectDongbi.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
