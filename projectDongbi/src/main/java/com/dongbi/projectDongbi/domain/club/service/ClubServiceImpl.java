@@ -3,12 +3,9 @@ package com.dongbi.projectDongbi.domain.club.service;
 import com.dongbi.projectDongbi.domain.club.Club;
 import com.dongbi.projectDongbi.domain.club.repository.ClubRepository;
 import com.dongbi.projectDongbi.web.dto.club.ClubRequestDto;
-import com.dongbi.projectDongbi.web.dto.club.ClubResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,9 +24,9 @@ public class ClubServiceImpl implements ClubService{
     @Override
     @Transactional
     public Club changeClubname(ClubRequestDto requestDto) {
-        System.out.println(requestDto.getClubName());
+        System.out.println(requestDto.getClubname());
         Club club = findClubById(requestDto.getId());
-        club.updateName(requestDto.getClubName());
+        club.updateName(requestDto.getClubname());
 
         return club;
     }
