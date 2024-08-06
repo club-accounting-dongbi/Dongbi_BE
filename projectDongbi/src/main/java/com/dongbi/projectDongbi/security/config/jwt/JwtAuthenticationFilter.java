@@ -22,13 +22,19 @@ import java.io.IOException;
 // /login 요청해서 username, password 전송하면 (post)
 // UsernamePasswordAuthenticationFilter 가 동작.
 
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
+
+    public JwtAuthenticationFilter (AuthenticationManager authenticationManager, RefreshTokenRepository refreshTokenRepository, JwtUtil jwtUtil) {
+        this.authenticationManager = authenticationManager;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.jwtUtil = jwtUtil;
+        setFilterProcessesUrl("/auth/login"); // URL 경로 설정
+    }
 
     // /login 요청을 하면 로그인 시도를 위해서 실행되는 함수
     @Override
