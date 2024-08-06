@@ -7,9 +7,9 @@ import com.dongbi.projectDongbi.domain.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -81,6 +81,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         refreshTokenRepository.save(token);
 
         response.addHeader("Authorization", "Bearer "+jwtToken);
-        response.addHeader("Refresh-Token", refreshToken);
+        response.addCookie(createCookie("refresh", refreshToken));
+    }
+
+    private Cookie createCookie(String key, String value){
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setHttpOnly(true);
+        cookie.setAttribute("SameSite", "None");
+        cookie.setPath("/");
+        cookie.setSecure(true);
+        return cookie;
     }
 }

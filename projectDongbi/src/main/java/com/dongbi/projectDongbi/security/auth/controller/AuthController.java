@@ -1,7 +1,10 @@
 package com.dongbi.projectDongbi.security.auth.controller;
 
 import com.dongbi.projectDongbi.security.auth.service.AuthService;
+import com.dongbi.projectDongbi.web.dto.auth.AuthResponseDto;
 import com.dongbi.projectDongbi.web.dto.user.SignupRequestDto;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,5 +30,11 @@ public class AuthController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        AuthResponseDto collect = authService.refresh(request, response);
+        return ResponseEntity.ok(collect);
     }
 }
