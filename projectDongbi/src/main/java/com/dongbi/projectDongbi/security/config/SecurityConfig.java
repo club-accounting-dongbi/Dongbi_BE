@@ -35,13 +35,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, refreshTokenRepository, jwtUtil);
-        jwtAuthenticationFilter.setFilterProcessesUrl("/auth/login"); // URL 경로 설정
-
         http
-                //BasicAuthenticationFilter.class 실행 전에 필터가 실행
-                //After도 가능하며, 다른 클래스도 가능하다.
-//                .addFilterBefore(new MyFilter2(), SecurityContextHolderFilter.class)
 
                 .csrf(csrf -> csrf.disable())
                 .addFilter(corsFilter) //@CrossOrigin(인증X), 시큐리티 필터에 등록 인증
@@ -53,9 +47,12 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests((requests) -> requests
-                        .anyRequest().permitAll()
+                        .requestMatchers("/", "/auth/**", "/email/**")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, refreshTokenRepository, jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
