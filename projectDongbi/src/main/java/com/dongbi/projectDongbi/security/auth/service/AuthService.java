@@ -56,6 +56,7 @@ public class AuthService {
 
         if(cookies == null){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
         }
 
         for(Cookie cookie : cookies){
@@ -67,6 +68,7 @@ public class AuthService {
 
         if(refreshToken == null){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
         }
 
         try {
@@ -74,10 +76,12 @@ public class AuthService {
         }
         catch (ExpiredJwtException e){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
         }
 
         if(!refreshTokenRepository.existsByToken(refreshToken)){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
         }
 
         refreshTokenRepository.deleteByToken(refreshToken);
@@ -85,12 +89,14 @@ public class AuthService {
         String email = jwtUtil.getEmail(refreshToken);
         if (email == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
         }
 
         // 데이터베이스에서 사용자 조회
         User user = userRepository.findByEmail(email);
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
         }
 
         String jwtToken = jwtUtil.createJwtToken(user);
@@ -104,7 +110,7 @@ public class AuthService {
         refreshTokenRepository.save(token);
 
         response.setHeader("Authorization", "Bearer " + jwtToken);
-        response.addCookie(createCookie("refresh", refreshToken));
+        response.addCookie(jwtUtil.createCookie("refresh", refreshToken));
 
         return AuthResponseDto.builder()
                 .id(user.getId())
@@ -112,13 +118,4 @@ public class AuthService {
                 .build();
     }
 
-    private Cookie createCookie(String key, String value){
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24 * 60 * 60);
-        cookie.setHttpOnly(true);
-        cookie.setAttribute("SameSite", "None");
-        cookie.setPath("/");
-        cookie.setSecure(true);
-        return cookie;
-    }
 }
