@@ -32,7 +32,7 @@ public class JwtUtil {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (JwtException | IllegalArgumentException e) {
-            throw new RuntimeException("Invalid JWT token", e);
+            throw new RuntimeException("토큰이 만료되었습니다. 재발급 받아주세요.", e);
         }
     }
 
@@ -78,6 +78,16 @@ public class JwtUtil {
                 .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(getSigningKey())
                 .compact();
+    }
+
+    public Cookie createCookie(String key, String value){
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24 * 60 * 60);
+        cookie.setHttpOnly(true);
+        cookie.setAttribute("SameSite", "None");
+        cookie.setPath("/");
+        cookie.setSecure(true);
+        return cookie;
     }
 
     //HS256 알고리즘 서명 키 생성
