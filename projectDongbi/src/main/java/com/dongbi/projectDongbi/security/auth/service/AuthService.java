@@ -1,5 +1,7 @@
 package com.dongbi.projectDongbi.security.auth.service;
 
+import com.dongbi.projectDongbi.domain.blacklistedToken.BlacklistedToken;
+import com.dongbi.projectDongbi.domain.blacklistedToken.repository.BlacklistedTokenRepository;
 import com.dongbi.projectDongbi.domain.club.Club;
 import com.dongbi.projectDongbi.domain.refreshToken.RefreshToken;
 import com.dongbi.projectDongbi.domain.refreshToken.repository.RefreshTokenRepository;
@@ -13,7 +15,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final BlacklistedTokenRepository blacklistedTokenRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -51,6 +53,7 @@ public class AuthService {
 
     @Transactional
     public AuthResponseDto refresh(HttpServletRequest request, HttpServletResponse response){
+
         String refreshToken = null;
         Cookie[] cookies = request.getCookies();
 
@@ -68,6 +71,11 @@ public class AuthService {
 
         if(refreshToken == null){
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        }
+
+        if (blacklistedTokenRepository.existsByToken(refreshToken)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return null;
         }
 
@@ -116,6 +124,12 @@ public class AuthService {
                 .id(user.getId())
                 .accessToken(jwtToken)
                 .build();
+    }
+
+    @Transactional
+    public void logout(String refreshToken){
+        blacklistedTokenRepository.save(new BlacklistedToken(refreshToken));
+        refreshTokenRepository.deleteByToken(refreshToken);
     }
 
 }
