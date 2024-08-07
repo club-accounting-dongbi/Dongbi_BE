@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GenerationRequestDto {
     private String name;
+    private Long generationNum;
     private Long clubId;
     private LocalDate startDate;
     private LocalDate endDate;
