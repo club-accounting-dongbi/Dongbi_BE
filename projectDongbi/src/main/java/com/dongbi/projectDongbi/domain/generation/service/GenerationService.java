@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,9 @@ public class GenerationService {
                 .startDate(requestDto.getStartDate())
                 .endDate(requestDto.getEndDate())
                 .actFlag(true)
+                .generationNum(getNextGenerationNum())
                 .club(club)
+                .amount(new BigDecimal(0))
                 .clubMembers(new ArrayList<>())
                 .build();
 
@@ -58,5 +61,9 @@ public class GenerationService {
         System.out.println("generationNum = " + generationNum);
         System.out.println(generationRepository.findGenerationByGenerationNum(generationNum));
         return generationRepository.findGenerationByGenerationNum(generationNum);
+    }
+    private Long getNextGenerationNum(){
+        Long beforeGenerationNum = generationRepository.findTopGenerationNum();
+        return (beforeGenerationNum != null ? beforeGenerationNum + 1 : 1);
     }
 }
