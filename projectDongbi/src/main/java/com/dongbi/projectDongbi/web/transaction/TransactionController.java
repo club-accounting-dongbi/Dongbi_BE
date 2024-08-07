@@ -3,6 +3,7 @@ package com.dongbi.projectDongbi.web.transaction;
 import com.dongbi.projectDongbi.domain.common.file.File;
 import com.dongbi.projectDongbi.domain.common.file.service.FileService;
 import com.dongbi.projectDongbi.domain.transaction.service.TransactionService;
+import com.dongbi.projectDongbi.global.common.response.ApiResponse;
 import com.dongbi.projectDongbi.global.exception.TransactionException;
 import com.dongbi.projectDongbi.web.transaction.dto.request.DepositRequest;
 import com.dongbi.projectDongbi.web.transaction.dto.request.TransactionConditionRequest;
@@ -37,42 +38,45 @@ public class TransactionController {
     private final FileService fileService;
 
     @GetMapping("/search")
-    public ResponseEntity<Page<TransactionBankingResponse>> getTransactionList(
+    public ResponseEntity<ApiResponse<Page<TransactionBankingResponse>>> getTransactionList(
             @RequestBody TransactionConditionRequest request,
             @PageableDefault(size = 10, sort = "occurence_date",direction = Sort.Direction.ASC) Pageable pageable
 
     ){
         Page<TransactionBankingResponse> result = transactionService.getTransactionList(request, pageable);
 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @PostMapping("/deposit")
-    public ResponseEntity<Void> createDeposit(@RequestBody DepositRequest request){
+    public ResponseEntity<ApiResponse<Void>> createDeposit(@RequestBody DepositRequest request){
         transactionService.createDeposit(request);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.success());
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<Void> createWithdraw(@RequestPart("file") MultipartFile file , @RequestPart WithDrawalRequest request) throws IOException {
+    public ResponseEntity<ApiResponse<Void>> createWithdraw(@RequestPart("file") MultipartFile file , @RequestPart WithDrawalRequest request) throws IOException {
         File saveFile = fileService.saveFile(file);
         transactionService.createWithdraw(request, saveFile.getFilePath());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.success());
     }
 
     @GetMapping("/file")
-    public ResponseEntity<Resource> getImage(@RequestParam("filePath") String filePath)  {
+    public ResponseEntity<ApiResponse<Resource>> getImage(@RequestParam("filePath") String filePath)  {
         try{
             String decodedPath = URLDecoder.decode(filePath, StandardCharsets.UTF_8.toString());
             Resource file = fileService.getFile(decodedPath);
             String contentType = Files.probeContentType(Paths.get(decodedPath));
 
             MediaType mediaType = MediaType.parseMediaType(contentType != null ? contentType : MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            return ResponseEntity.ok()
+
+
+            return  ResponseEntity.ok()
                     .contentType(mediaType)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\""+ file.getFilename() + "\"")
-                    .body(file);
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"")
+                    .body(new ApiResponse<>("getImage Success", file));
+
 
         }catch(IOException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -85,7 +89,7 @@ public class TransactionController {
     }
 
     @GetMapping("download/{type}")
-    public ResponseEntity<byte[]> downloadTransaction(@PathVariable String type, @RequestBody TransactionConditionRequest request,
+    public ResponseEntity<ApiResponse<byte[]>> downloadTransaction(@PathVariable String type, @RequestBody TransactionConditionRequest request,
                                                       @PageableDefault(size = 10, sort = "occurence_date",direction = Sort.Direction.ASC) Pageable pageable) throws IOException{
     Page<TransactionBankingResponse> result = transactionService.getTransactionList(request, pageable);
 
@@ -97,14 +101,14 @@ public class TransactionController {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"transactions.xlsx\"")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(excelContent);
+                    .body(new ApiResponse<>("엑셀 다운로드 성공",excelContent));
         }else if(type.equals("pdf")){
             byte[] pdfContent = fileService.generatePdf(result);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"transactions.pdf\"")
                     .contentType(MediaType.APPLICATION_PDF)
-                    .body(pdfContent);
+                    .body(new ApiResponse<>("PDF 다운로드 성공", pdfContent));
         }else {
 
             throw new IOException("파일생성에 문제가 발생하였습니다.");
