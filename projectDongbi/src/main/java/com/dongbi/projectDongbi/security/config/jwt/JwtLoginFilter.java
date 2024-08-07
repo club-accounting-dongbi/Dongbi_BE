@@ -9,7 +9,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,15 +21,21 @@ import java.io.IOException;
 // /login 요청해서 username, password 전송하면 (post)
 // UsernamePasswordAuthenticationFilter 가 동작.
 
-@RequiredArgsConstructor
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
 
-    // /login 요청을 하면 로그인 시도를 위해서 실행되는 함수
+    public JwtLoginFilter(AuthenticationManager authenticationManager, RefreshTokenRepository refreshTokenRepository, JwtUtil jwtUtil) {
+        this.authenticationManager = authenticationManager;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.jwtUtil = jwtUtil;
+        setFilterProcessesUrl("/auth/login"); // URL 경로 설정
+    }
+
+    // /auth/login 요청을 하면 로그인 시도를 위해서 실행되는 함수
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
@@ -75,6 +80,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         refreshTokenRepository.save(token);
 
         response.addHeader("Authorization", "Bearer "+jwtToken);
-        response.addHeader("Refresh-Token", refreshToken);
+        response.addCookie(jwtUtil.createCookie("refresh", refreshToken));
     }
 }

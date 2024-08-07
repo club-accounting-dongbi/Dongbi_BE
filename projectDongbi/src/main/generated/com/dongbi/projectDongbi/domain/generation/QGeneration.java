@@ -28,6 +28,8 @@ public class QGeneration extends EntityPathBase<Generation> {
 
     public final com.dongbi.projectDongbi.domain.club.QClub club;
 
+    public final ListPath<com.dongbi.projectDongbi.domain.clubmembers.ClubMember, com.dongbi.projectDongbi.domain.clubmembers.QClubMember> clubMembers = this.<com.dongbi.projectDongbi.domain.clubmembers.ClubMember, com.dongbi.projectDongbi.domain.clubmembers.QClubMember>createList("clubMembers", com.dongbi.projectDongbi.domain.clubmembers.ClubMember.class, com.dongbi.projectDongbi.domain.clubmembers.QClubMember.class, PathInits.DIRECT2);
+
     public final DatePath<java.time.LocalDate> endDate = createDate("endDate", java.time.LocalDate.class);
 
     public final NumberPath<Long> generationNum = createNumber("generationNum", Long.class);
