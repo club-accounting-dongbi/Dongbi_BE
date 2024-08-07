@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/generations")
@@ -27,6 +29,15 @@ public class GenerationController {
     @GetMapping("/{generationNum}")
     public ResponseEntity<GenerationResponseDto> getGeneration(@PathVariable Long generationNum){
         Generation generation = generationService.getGenerationByGenerationNum(generationNum);
+        GenerationResponseDto collect = generationMapper.toResponseDto(generation);
+        return ResponseEntity.ok(collect);
+    }
+
+    @PatchMapping("/term/{generationNum}")
+    public ResponseEntity<GenerationResponseDto> updateEndDate(@PathVariable Long generationNum, @RequestBody LocalDate endDate){
+        System.out.println("fjsdfbgasgkbfskjglnaskjgnafskngkjlfl");
+        Generation generation = generationService.updateEndDate(generationNum, endDate);
+        System.out.println("endDate = " + endDate);
         GenerationResponseDto collect = generationMapper.toResponseDto(generation);
         return ResponseEntity.ok(collect);
     }
