@@ -19,8 +19,11 @@ public class GenerationMapperImpl implements GenerationMapper{
         GenerationResponseDto responseDto = new GenerationResponseDto().builder()
                 .id(generation.getId())
                 .name(generation.getName())
+                .generationNum(generation.getGenerationNum())
                 .startDate(generation.getStartDate())
                 .endDate(generation.getEndDate())
+                .amount(generation.getAmount())
+                .actFlag(generation.isActFlag())
                 .members(toClubMemberResponseDtoList(generation.getClubMembers()))
                 .build();
         return responseDto;
