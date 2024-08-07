@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,10 +48,9 @@ public class GenerationService {
 
         generation.getClubMembers().addAll(members);
 
-        generationRepository.save(generation);
         clubMemberRepository.saveAll(members);
 
-        return generation;
+        return generationRepository.save(generation);
     }
 
     public Generation getGeneration(Long clubId, Long generationNum){
@@ -58,10 +58,20 @@ public class GenerationService {
     }
 
     public Generation getGenerationByGenerationNum(Long generationNum){
-        System.out.println("generationNum = " + generationNum);
-        System.out.println(generationRepository.findGenerationByGenerationNum(generationNum));
         return generationRepository.findGenerationByGenerationNum(generationNum);
     }
+
+    @Transactional
+    public Generation updateEndDate(Long generationNum, LocalDate endDate){
+        Generation generation = getGenerationByGenerationNum(generationNum);
+
+        if (endDate == null || endDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("유효하지 않은 종료 날짜입니다.");
+        }
+        generation.updateEndDate(endDate);
+        return generationRepository.save(generation);
+    }
+
     private Long getNextGenerationNum(){
         Long beforeGenerationNum = generationRepository.findTopGenerationNum();
         return (beforeGenerationNum != null ? beforeGenerationNum + 1 : 1);
