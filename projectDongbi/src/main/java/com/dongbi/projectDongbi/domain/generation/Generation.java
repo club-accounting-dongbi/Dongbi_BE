@@ -35,7 +35,7 @@ public class Generation {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "generation_num", nullable = false)
+    @Column(name = "generation_num")
     private Long generationNum;
 
     private boolean actFlag;
@@ -49,8 +49,7 @@ public class Generation {
     private BigDecimal amount;
 
     @Builder
-    public Generation(Long generationNum ,String name, Club club, LocalDate startDate, LocalDate endDate){
-        this.generationNum = generationNum;
+    public Generation(String name, Club club, LocalDate startDate, LocalDate endDate){
         this.name = name;
         this.club = club;
         this.actFlag = true;
