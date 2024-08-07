@@ -53,4 +53,10 @@ public class GenerationService {
     public Generation getGeneration(Long clubId, Long generationNum){
         return generationRepository.findByClubMemberIdAndGenerationNum(clubId, generationNum);
     }
+
+    public Generation getGenerationByGenerationNum(Long generationNum){
+        System.out.println("generationNum = " + generationNum);
+        System.out.println(generationRepository.findGenerationByGenerationNum(generationNum));
+        return generationRepository.findGenerationByGenerationNum(generationNum);
+    }
 }

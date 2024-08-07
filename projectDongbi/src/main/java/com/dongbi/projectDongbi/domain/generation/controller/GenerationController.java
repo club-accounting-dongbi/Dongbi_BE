@@ -7,10 +7,7 @@ import com.dongbi.projectDongbi.web.dto.generation.GenerationRequestDto;
 import com.dongbi.projectDongbi.web.dto.generation.GenerationResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +20,13 @@ public class GenerationController {
     @PostMapping("")
     public ResponseEntity<GenerationResponseDto> createGeneration(@RequestBody GenerationRequestDto generationRequestDto){
         Generation generation = generationService.createGeneration(generationRequestDto);
+        GenerationResponseDto collect = generationMapper.toResponseDto(generation);
+        return ResponseEntity.ok(collect);
+    }
+
+    @GetMapping("/{generationNum}")
+    public ResponseEntity<GenerationResponseDto> getGeneration(@PathVariable Long generationNum){
+        Generation generation = generationService.getGenerationByGenerationNum(generationNum);
         GenerationResponseDto collect = generationMapper.toResponseDto(generation);
         return ResponseEntity.ok(collect);
     }

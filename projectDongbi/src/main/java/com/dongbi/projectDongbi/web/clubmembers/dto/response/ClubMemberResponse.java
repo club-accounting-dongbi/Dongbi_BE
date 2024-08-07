@@ -9,6 +9,7 @@ import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
 public class ClubMemberResponse {
     private Generation generation;
     private String name;

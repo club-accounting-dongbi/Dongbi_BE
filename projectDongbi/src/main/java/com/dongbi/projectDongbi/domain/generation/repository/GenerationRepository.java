@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface GenerationRepository extends JpaRepository<Generation, Long>, GenerationCustomRepository{
 
     Generation findGenerationByClubIdAndGenerationNum(Long clubId, Long generationNum);
-
+    Generation findGenerationByGenerationNum(Long generationNum);
 }
