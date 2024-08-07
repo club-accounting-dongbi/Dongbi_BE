@@ -68,4 +68,8 @@ public class Generation {
                 .collect(Collectors.toList());
     }
 
+    public void updateEndDate(LocalDate endDate){
+        this.endDate = endDate;
+    }
+
 }
