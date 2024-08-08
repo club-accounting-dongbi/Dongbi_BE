@@ -1,5 +1,6 @@
 package com.dongbi.projectDongbi.domain.transaction;
 
+import com.dongbi.projectDongbi.domain.BaseEntity;
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.global.exception.TransactionException;
 import jakarta.persistence.*;
@@ -14,7 +15,7 @@ import java.time.LocalTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Transaction {
+public class Transaction extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
