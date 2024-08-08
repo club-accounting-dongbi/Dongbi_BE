@@ -1,5 +1,6 @@
 package com.dongbi.projectDongbi.domain.paid;
 
+import com.dongbi.projectDongbi.domain.BaseEntity;
 import com.dongbi.projectDongbi.domain.clubmembers.ClubMember;
 import com.dongbi.projectDongbi.domain.col.Col;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Paid {
+public class Paid extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "paid_id")
     private Long id;
