@@ -1,5 +1,6 @@
 package com.dongbi.projectDongbi.domain.generation;
 
+import com.dongbi.projectDongbi.domain.BaseEntity;
 import com.dongbi.projectDongbi.domain.club.Club;
 import com.dongbi.projectDongbi.domain.clubmembers.ClubMember;
 import jakarta.persistence.*;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Generation {
+public class Generation extends BaseEntity {
     public BigDecimal setDeposit;
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "generation_id")
