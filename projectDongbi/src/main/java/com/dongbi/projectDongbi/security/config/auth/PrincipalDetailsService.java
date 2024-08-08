@@ -1,4 +1,4 @@
-package com.dongbi.projectDongbi.config.auth;
+package com.dongbi.projectDongbi.security.config.auth;
 
 import com.dongbi.projectDongbi.domain.user.User;
 import com.dongbi.projectDongbi.domain.user.repository.UserRepository;

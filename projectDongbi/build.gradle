@@ -30,13 +30,22 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
+
 	//머스테치
 	compileOnly 'org.springframework.boot:spring-boot-starter-mustache'
+
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation group: 'org.apache.poi', name: 'poi', version: '4.1.2'
 	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
 	implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13.4'
+
+	// Swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
