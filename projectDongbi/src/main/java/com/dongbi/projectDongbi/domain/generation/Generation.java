@@ -73,4 +73,8 @@ public class Generation extends BaseEntity {
         this.endDate = endDate;
     }
 
+    public void generationActFalse(){
+        this.actFlag = false;
+    }
+
 }
