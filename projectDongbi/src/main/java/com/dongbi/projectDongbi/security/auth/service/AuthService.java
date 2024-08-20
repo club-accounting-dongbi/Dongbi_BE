@@ -117,6 +117,7 @@ public class AuthService {
 
         refreshTokenRepository.save(token);
 
+        response.addHeader("Access-Control-Expose-Headers", "Authorization");
         response.setHeader("Authorization", "Bearer " + jwtToken);
         response.addCookie(jwtUtil.createCookie("refresh", refreshToken));
 
