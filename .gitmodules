@@ -1,3 +1,3 @@
-[submodule "dongbi-submodules"]
-	path = dongbi-submodules
+[submodule "projectDongbi/src/main/resources/submodules"]
+	path = projectDongbi/src/main/resources/submodules
 	url = https://github.com/changheeBong/dongbi-submodules.git
