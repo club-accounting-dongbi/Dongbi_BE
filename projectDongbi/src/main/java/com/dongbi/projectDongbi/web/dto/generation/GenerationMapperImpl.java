@@ -4,7 +4,9 @@ import com.dongbi.projectDongbi.domain.clubmembers.ClubMember;
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.domain.paid.Paid;
 import com.dongbi.projectDongbi.web.clubmembers.dto.response.ClubMemberResponse;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class GenerationMapperImpl implements GenerationMapper{
+    @Autowired
+    private EntityManager em;
 
     @Override
     public GenerationResponseDto toResponseDto(Generation generation) {
@@ -27,6 +31,14 @@ public class GenerationMapperImpl implements GenerationMapper{
                 .members(toClubMemberResponseDtoList(generation.getClubMembers()))
                 .build();
         return responseDto;
+    }
+
+    @Override
+    public List<Long> findGenerationNum(Long clubId) {
+        return em.createQuery("select g.generationNum from Generation g where g.club.id = :clubId",Long.class)
+                .setParameter("clubId", clubId)
+                .getResultList();
+
     }
 
     private List<ClubMemberResponse> toClubMemberResponseDtoList(List<ClubMember> members) {

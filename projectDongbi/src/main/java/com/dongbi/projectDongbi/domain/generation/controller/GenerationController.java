@@ -26,6 +26,11 @@ public class GenerationController {
         return ResponseEntity.ok(collect);
     }
 
+    @GetMapping("/check/{generationNum}")
+    public ResponseEntity<?> checkGenerationNum(@PathVariable Long generationNum){
+        return ResponseEntity.ok(generationService.isDuplicate(generationNum));
+    }
+
     @GetMapping("/{generationNum}")
     public ResponseEntity<GenerationResponseDto> getGeneration(@PathVariable Long generationNum){
         Generation generation = generationService.getGenerationByGenerationNum(generationNum);

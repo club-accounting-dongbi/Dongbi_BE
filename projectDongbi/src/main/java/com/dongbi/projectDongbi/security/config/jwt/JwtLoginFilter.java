@@ -79,6 +79,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         refreshTokenRepository.save(token);
 
+        response.addHeader("Access-Control-Expose-Headers", "Authorization");
         response.addHeader("Authorization", "Bearer "+jwtToken);
         response.addCookie(jwtUtil.createCookie("refresh", refreshToken));
 
