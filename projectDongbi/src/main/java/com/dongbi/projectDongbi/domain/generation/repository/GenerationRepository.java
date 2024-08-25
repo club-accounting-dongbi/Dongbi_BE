@@ -14,9 +14,7 @@ public interface GenerationRepository extends JpaRepository<Generation, Long>, G
 
     Generation findGenerationByClubIdAndGenerationNum(Long clubId, Long generationNum);
     Generation findGenerationByGenerationNum(Long generationNum);
-
-    @Query("SELECT MAX(g.generationNum) FROM Generation g")
-    Long findTopGenerationNum();
+    boolean existsByGenerationNum(Long generationNum);
 
     List<Generation> findByEndDate(@RequestParam("endDate") LocalDate localDate);
 }

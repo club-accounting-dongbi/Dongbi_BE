@@ -2,6 +2,7 @@ package com.dongbi.projectDongbi.domain.generation.controller;
 
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.domain.generation.service.GenerationService;
+import com.dongbi.projectDongbi.global.common.response.ApiResponse;
 import com.dongbi.projectDongbi.web.dto.generation.GenerationMapper;
 import com.dongbi.projectDongbi.web.dto.generation.GenerationRequestDto;
 import com.dongbi.projectDongbi.web.dto.generation.GenerationResponseDto;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +28,11 @@ public class GenerationController {
         return ResponseEntity.ok(collect);
     }
 
+    @GetMapping("/check/{generationNum}")
+    public ResponseEntity<?> checkGenerationNum(@PathVariable Long generationNum){
+        return ResponseEntity.ok(generationService.isDuplicate(generationNum));
+    }
+
     @GetMapping("/{generationNum}")
     public ResponseEntity<GenerationResponseDto> getGeneration(@PathVariable Long generationNum){
         Generation generation = generationService.getGenerationByGenerationNum(generationNum);
@@ -40,5 +47,11 @@ public class GenerationController {
         System.out.println("endDate = " + endDate);
         GenerationResponseDto collect = generationMapper.toResponseDto(generation);
         return ResponseEntity.ok(collect);
+    }
+
+    @GetMapping("/num/{clubId}")
+    public ResponseEntity<ApiResponse<List<Long>>> findGenerationNums(@PathVariable Long clubId){
+        List<Long> result = generationMapper.findGenerationNum(clubId);
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 }

@@ -34,7 +34,7 @@ public class GenerationService {
                 .startDate(requestDto.getStartDate())
                 .endDate(requestDto.getEndDate())
                 .actFlag(true)
-                .generationNum(getNextGenerationNum())
+                .generationNum(requestDto.getGenerationNum())
                 .club(club)
                 .amount(new BigDecimal(0))
                 .clubMembers(new ArrayList<>())
@@ -72,8 +72,7 @@ public class GenerationService {
         return generationRepository.save(generation);
     }
 
-    private Long getNextGenerationNum(){
-        Long beforeGenerationNum = generationRepository.findTopGenerationNum();
-        return (beforeGenerationNum != null ? beforeGenerationNum + 1 : 1);
+    public boolean isDuplicate(Long generationNum){
+        return generationRepository.existsByGenerationNum(generationNum);
     }
 }
