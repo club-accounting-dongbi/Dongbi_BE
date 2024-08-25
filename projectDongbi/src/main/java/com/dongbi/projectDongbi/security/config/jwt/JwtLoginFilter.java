@@ -81,5 +81,11 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         response.addHeader("Authorization", "Bearer "+jwtToken);
         response.addCookie(jwtUtil.createCookie("refresh", refreshToken));
+
+        // 동아리 ID 포함하여 응답 본문 생성
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        String jsonResponse = String.format("{\"token\": \"%s\", \"clubId\": %d}", jwtToken, principalDetails.getClubId());
+        response.getWriter().write(jsonResponse);
     }
 }
