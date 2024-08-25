@@ -38,6 +38,10 @@ public class PrincipalDetails implements UserDetails {
         return user.getEmail();
     }
 
+    public Long getClubId() {
+        return user.getClub().getId();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
