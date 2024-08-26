@@ -9,4 +9,6 @@ public interface GenerationMapper {
     GenerationResponseDto toResponseDto(Generation generation);
 
     List<Long> findGenerationNum(Long clubId);
+
+    List<String> getNames(Long clubId, Long generationNum);
 }
