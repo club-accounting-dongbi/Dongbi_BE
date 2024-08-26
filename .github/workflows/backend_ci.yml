@@ -1,4 +1,4 @@
-name: 애자일허브 백엔드 CI 테스트 자동화
+name: 동비 백엔드 CI 테스트 자동화
 
 on:
   pull_request:
@@ -37,7 +37,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Gradle 명령 실행을 위한 권한을 부여합니다
-        run: chmod +x gradlew
+        run: chmod +x ./gradlew
 
       - name: Gradle build를 수행합니다
         run: ./gradlew build
