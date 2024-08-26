@@ -12,9 +12,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./projectDongbi
 
     steps:
       - name: 레포지토리를 가져옵니다
@@ -38,6 +35,7 @@ jobs:
 
       - name: Gradle 명령 실행을 위한 권한을 부여합니다
         run: chmod +x ./gradlew
+        working-directory: ~/projectDongbi
 
       - name: Gradle build를 수행합니다
         run: ./gradlew build
