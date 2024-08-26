@@ -54,4 +54,11 @@ public class GenerationController {
         List<Long> result = generationMapper.findGenerationNum(clubId);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
+
+    @GetMapping("/members/{clubId}/{generationNum}")
+    public ResponseEntity<ApiResponse<List<String>>> findMembers(@PathVariable(name = "clubId") Long clubId,
+                                                                 @PathVariable(name = "generationNum") Long generationNum){
+        List<String> result = generationMapper.getNames(clubId,generationNum);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
 }
