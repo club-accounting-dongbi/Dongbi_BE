@@ -26,7 +26,7 @@ public class ClubMember extends BaseEntity {
     private Generation generation;
 
 
-    @Column(name = "names", nullable = false, length = 5)
+    @Column(name = "names", nullable = false, length = 10)
     private String name;
 
     @OneToMany(mappedBy = "paid", cascade =  CascadeType.ALL, orphanRemoval = true)
@@ -43,7 +43,7 @@ public class ClubMember extends BaseEntity {
 
     public static ClubMember createClubMember(String name, Generation generation){
         ClubMember cm = new ClubMember();
-        cm.name = name;
+        cm.name = generation.getGenerationNum() + "기 " +name;
         cm.generation = generation;
         cm.delFlag = false;
         cm.actFlag = false;
