@@ -41,14 +41,23 @@ public class ClubMember extends BaseEntity {
 
 
 
-    public static ClubMember createClubMember(String name, Generation generation){
+    public static ClubMember createClubMember(String name, Generation generation) {
         ClubMember cm = new ClubMember();
-        cm.name = generation.getGenerationNum() + "기 " +name;
+
+        // 첫 글자가 숫자인지 확인
+        if (Character.isDigit(name.charAt(0))) {
+            cm.name = name; // 첫 글자가 숫자면 name만 설정
+        } else {
+            cm.name = generation.getGenerationNum() + "기 " + name; // 기존 로직
+        }
+
         cm.generation = generation;
         cm.delFlag = false;
         cm.actFlag = false;
+
         return cm;
     }
+
 
     public void updateClubMember(UpdateClubMemberRequest request) {
         if(request.getDelFlag() != null){
