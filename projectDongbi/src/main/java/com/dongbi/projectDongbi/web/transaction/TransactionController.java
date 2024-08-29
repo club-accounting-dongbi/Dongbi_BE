@@ -34,7 +34,7 @@ public class TransactionController {
 
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<Page<TransactionBankingResponse>>> getTransactionList(
-            @RequestBody TransactionConditionRequest request,
+              TransactionConditionRequest request,
             @PageableDefault(size = 10, sort = "occurence_date",direction = Sort.Direction.ASC) Pageable pageable
 
     ){
@@ -59,7 +59,7 @@ public class TransactionController {
 
 
     @GetMapping("download/{type}")
-    public ResponseEntity<byte[]> downloadTransaction(@PathVariable String type, @RequestBody TransactionConditionRequest request,
+    public ResponseEntity<byte[]> downloadTransaction(@PathVariable String type, @ModelAttribute TransactionConditionRequest request,
                                                       @PageableDefault(size = 10, sort = "occurence_date",direction = Sort.Direction.ASC) Pageable pageable) throws IOException{
     Page<TransactionBankingResponse> result = transactionService.getTransactionList(request, pageable);
 
