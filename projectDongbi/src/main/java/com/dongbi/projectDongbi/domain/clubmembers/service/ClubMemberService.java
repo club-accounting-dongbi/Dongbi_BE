@@ -11,6 +11,7 @@ import com.dongbi.projectDongbi.web.clubmembers.dto.request.UpdateClubMemberRequ
 import com.dongbi.projectDongbi.web.clubmembers.dto.response.ClubMemberResponse;
 import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClubMemberService {
 
     private final ClubMemberRepository clubMemberRepository;
@@ -48,7 +50,7 @@ public class ClubMemberService {
             ClubMember clubMember = clubMemberRepository.findByClubIdAndName(request.getClubId(),request.getName());
             if(clubMember != null){
                 clubMember.updateClubMember(request);
-                if(!request.getPaid().isEmpty()){
+                if(request.getPaid() != null ){
                     paidService.updatePaid(clubMember,request.getGenerationNum(),request.getPaid());
                 }
             }
@@ -57,8 +59,7 @@ public class ClubMemberService {
     }
 
     public List<ClubMemberResponse> findGenerationClubMembers(SearchClubMemberRequest request) {
-
-        if(request.getClubId() == null || request.getGenerationNum() == null){
+      if(request.getClubId() == null || request.getGenerationNum() == null){
             throw  new NoSuchElementException("클럽Id나 기수번호가 잘못되었습니다.");
         }
         return clubMemberRepository.findByClubIdAndGenerationNum(request);

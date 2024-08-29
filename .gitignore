@@ -213,3 +213,4 @@ projectDongbi/build.gradle
 projectDongbi/gradle/wrapper/gradle-wrapper.properties
 projectDongbi/gradlew
 projectDongbi/settings.gradle
+/projectDongbi/src/main/generated
