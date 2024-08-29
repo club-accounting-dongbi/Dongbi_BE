@@ -63,7 +63,7 @@ public class GenerationMapperImpl implements GenerationMapper{
                             .name(member.getName())
                             .del_flag(member.getDelFlag())
                             .act_flag(member.getActFlag())
-                            .pay(toPaidResponseDtoList(member.getPay()))
+                            .pays(toPaidResponseDtoList(member.getPay()))
                             .build();
                     return memberDto;
                 })

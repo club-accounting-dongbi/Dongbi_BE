@@ -27,9 +27,9 @@ public class ClubMemberController {
 
 
 
-    @GetMapping("/active")
-    public  ResponseEntity<ApiResponse<List<ClubMemberResponse>>> findActiveClubMembers(@RequestBody SearchClubMemberRequest request){
-
+    @GetMapping("/active/{clubId}/{generationNum}")
+    public  ResponseEntity<ApiResponse<List<ClubMemberResponse>>> findActiveClubMembers(@PathVariable(name = "clubId") Long clubId, @PathVariable(name = "generationNum") Long generationNum){
+        SearchClubMemberRequest request = new SearchClubMemberRequest(clubId, generationNum);
         List<ClubMemberResponse> result = clubMemberService.findGenerationClubMembers(request);
         return ResponseEntity.ok(ApiResponse.success(result));
     }
