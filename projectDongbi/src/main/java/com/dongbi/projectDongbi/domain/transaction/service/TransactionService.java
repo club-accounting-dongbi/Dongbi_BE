@@ -39,29 +39,32 @@ public class TransactionService {
         for(String name : request.getNames()){
         Generation generation = generationService.getGeneration(request.getClubId(), request.getGenerationNum());
 
-        Transaction tr = new Transaction(generation,request.getPrice(),request.getColName(),name, generation.getAmount());
+        Transaction tr = Transaction.depositTransaction(generation,request.getPrice(),request.getColName(),name, generation.getAmount());;
+
         transactionRepository.save(tr);
         }
 
     }
 
     @Transactional
-    public void autoCreateDeposit(ClubMember clubMember, Paid paid){
-        Transaction tr = new Transaction(clubMember.getGeneration(),paid.getCol().getPrice(), paid.getCol().getColName(), clubMember.getName(), clubMember.getGeneration().getAmount());
+    public Long autoCreateDeposit(ClubMember clubMember, Paid paid){
+        Transaction tr = Transaction.depositTransaction(clubMember.getGeneration(),paid.getCol().getPrice(), paid.getCol().getColName(), clubMember.getName(), clubMember.getGeneration().getAmount());
         transactionRepository.save(tr);
+        return tr.getId();
     }
 
     @Transactional
-    public void autoDeleteDeposit(ClubMember clubMember, Paid paid){
-        Transaction tr = new Transaction(clubMember.getGeneration(),paid.getCol().getPrice(), LocalDate.now(), LocalTime.now(), clubMember.getName(),paid.getCol().getColName() + "입금 취소", clubMember.getGeneration().getAmount(), null);
+    public Long autoDeleteDeposit(ClubMember clubMember, Paid paid){
+        Transaction tr = Transaction.withdrawalTransaction(clubMember.getGeneration(),paid.getCol().getPrice(), LocalDate.now(), LocalTime.now(), clubMember.getName(),paid.getCol().getColName() + "입금 취소", clubMember.getGeneration().getAmount(), null);
         transactionRepository.save(tr);
+        return tr.getId();
     }
 
     @Transactional
     public Long createWithdraw(WithDrawalRequest request, String filePath) {
         Generation generation = generationService.getGeneration(request.getClubId(), request.getGenerationNum());
 
-        Transaction tr = new Transaction(generation, request.getPrice(), request.getOccurenceDate(), request.getOccurenceTime(), request.getPersonCharge(), request.getReason(), generation.getAmount(), filePath);
+        Transaction tr = Transaction.withdrawalTransaction(generation, request.getPrice(), request.getOccurenceDate(), request.getOccurenceTime(), request.getPersonCharge(), request.getReason(), generation.getAmount(), filePath);
         Transaction saved = transactionRepository.save(tr);
 
         return saved.getId();

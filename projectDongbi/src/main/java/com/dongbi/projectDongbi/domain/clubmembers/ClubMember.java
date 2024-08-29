@@ -1,5 +1,6 @@
 package com.dongbi.projectDongbi.domain.clubmembers;
 
+import com.dongbi.projectDongbi.domain.BaseEntity;
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.domain.paid.Paid;
 import com.dongbi.projectDongbi.web.clubmembers.dto.request.UpdateClubMemberRequest;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ClubMember {
+public class ClubMember extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "club_member_id")
