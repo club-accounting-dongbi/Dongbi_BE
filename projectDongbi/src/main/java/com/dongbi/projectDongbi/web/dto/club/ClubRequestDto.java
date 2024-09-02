@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ClubRequestDto {
     private Long id;
-    private String clubName;
+    private String clubname;
 }

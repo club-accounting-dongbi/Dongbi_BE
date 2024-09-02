@@ -1,5 +1,6 @@
 package com.dongbi.projectDongbi.domain.clubmembers;
 
+import com.dongbi.projectDongbi.domain.BaseEntity;
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.domain.paid.Paid;
 import com.dongbi.projectDongbi.web.clubmembers.dto.request.UpdateClubMemberRequest;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class ClubMember {
+public class ClubMember extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "club_member_id")
@@ -25,7 +26,7 @@ public class ClubMember {
     private Generation generation;
 
 
-    @Column(name = "names", nullable = false, length = 5)
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
     @OneToMany(mappedBy = "paid", cascade =  CascadeType.ALL, orphanRemoval = true)
@@ -40,14 +41,23 @@ public class ClubMember {
 
 
 
-    public static ClubMember createClubMember(String name, Generation generation){
+    public static ClubMember createClubMember(String name, Generation generation) {
         ClubMember cm = new ClubMember();
-        cm.name = name;
+
+        // 첫 글자가 숫자인지 확인
+        if (Character.isDigit(name.charAt(0))) {
+            cm.name = name; // 첫 글자가 숫자면 name만 설정
+        } else {
+            cm.name = generation.getGenerationNum() + "기 " + name; // 기존 로직
+        }
+
         cm.generation = generation;
         cm.delFlag = false;
         cm.actFlag = false;
+
         return cm;
     }
+
 
     public void updateClubMember(UpdateClubMemberRequest request) {
         if(request.getDelFlag() != null){
