@@ -35,6 +35,10 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         AuthResponseDto collect = authService.refresh(request, response);
+        if (collect == null) {
+            // refresh 메서드에서 오류가 발생한 경우, 적절한 상태 코드 설정
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(collect);
     }
 }

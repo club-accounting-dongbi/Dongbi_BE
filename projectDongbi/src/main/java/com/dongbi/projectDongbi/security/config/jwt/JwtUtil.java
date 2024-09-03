@@ -32,7 +32,7 @@ public class JwtUtil {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (JwtException | IllegalArgumentException e) {
-            throw new RuntimeException("토큰이 만료되었습니다. 재발급 받아주세요.", e);
+            throw new JwtException("토큰이 만료되었습니다. 재발급 받아주세요.", e);
         }
     }
 
@@ -54,8 +54,14 @@ public class JwtUtil {
 
     //토큰의 만료 날짜를 비교
     public Boolean isExpired(String token){
-        Date expiration = parseClaims(token).getExpiration();
-        return expiration.before(new Date());
+        try {
+            Date expiration = parseClaims(token).getExpiration();
+            return expiration.before(new Date());
+        } catch (JwtException e) {
+            throw new JwtException("토큰이 만료되었습니다. 재발급 받아주세요.", e);
+        } catch (Exception e) {
+            throw new RuntimeException("토큰 검증 중 오류 발생", e);
+        }
     }
 
     public String createJwtToken(User user){
