@@ -15,7 +15,6 @@ import java.util.List;
 public class GenerationRequestDto {
     private String name;
     private Long generationNum;
-    private Long clubId;
     private LocalDate startDate;
     private LocalDate endDate;
     private List<String> memberNames;

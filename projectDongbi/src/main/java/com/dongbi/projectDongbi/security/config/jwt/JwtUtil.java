@@ -32,7 +32,7 @@ public class JwtUtil {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (JwtException | IllegalArgumentException e) {
-            throw new RuntimeException("토큰이 만료되었습니다. 재발급 받아주세요.", e);
+            throw new JwtException("토큰이 만료되었습니다. 재발급 받아주세요.", e);
         }
     }
 
@@ -54,8 +54,14 @@ public class JwtUtil {
 
     //토큰의 만료 날짜를 비교
     public Boolean isExpired(String token){
-        Date expiration = parseClaims(token).getExpiration();
-        return expiration.before(new Date());
+        try {
+            Date expiration = parseClaims(token).getExpiration();
+            return expiration.before(new Date());
+        } catch (JwtException e) {
+            throw new JwtException("토큰이 만료되었습니다. 재발급 받아주세요.", e);
+        } catch (Exception e) {
+            throw new RuntimeException("토큰 검증 중 오류 발생", e);
+        }
     }
 
     public String createJwtToken(User user){
@@ -99,6 +105,22 @@ public class JwtUtil {
     private <T> T getClaim(String token, String claimKey, Class<T> claimType) {
         Claims claims = parseClaims(token);
         return claims.get(claimKey, claimType);
+    }
+
+    public Long extractUserId(String authorization) {
+        try {
+            String token = extractToken(authorization);
+            return getId(token);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("유효하지 않은 토큰: " + e.getMessage());
+        }
+    }
+
+    private String extractToken(String authorization) {
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            return authorization.replace("Bearer ", "").trim(); // 공백 제거
+        }
+        throw new IllegalArgumentException("헤더가 유효하지 않습니다.");
     }
 
 }

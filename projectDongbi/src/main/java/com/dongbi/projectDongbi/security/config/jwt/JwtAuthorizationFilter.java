@@ -3,7 +3,9 @@ package com.dongbi.projectDongbi.security.config.jwt;
 import com.dongbi.projectDongbi.security.config.auth.PrincipalDetails;
 import com.dongbi.projectDongbi.domain.user.User;
 import com.dongbi.projectDongbi.domain.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 //시큐리티가 filter 를 가지고 있는데 그 필터 중에 BasicAuthenticationFilter 가 있다.
 //권한이나 인증이 필요한 특정 주소를 요청했을 때 위 필터를 무조건 타게 되어있다.
@@ -48,11 +49,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         try{
             jwtUtil.isExpired(jwtToken);
-        }catch (ExpiredJwtException e){
-
-            PrintWriter writer = response.getWriter();
-            writer.write("토큰이 만료되었습니다.");
+        }catch (JwtException e){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token has expired");
             return;
         }
 

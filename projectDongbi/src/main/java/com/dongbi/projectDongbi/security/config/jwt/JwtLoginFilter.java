@@ -16,6 +16,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 //스프링 시큐리티에서 UsernamePasswordAuthenticationFilter 가 있는데
 // /login 요청해서 username, password 전송하면 (post)
@@ -41,22 +44,41 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
             throws AuthenticationException {
         System.out.println("JwtAuthenticationFilter : 로그인 시도 중");
 
-        //username, password 받아서
+        // username, password 받아서
         try {
             User user = objectMapper.readValue(request.getInputStream(), User.class);
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
 
-            //PrincipalDetailsService의 loadUserByUsername() 함수 실행
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
-            //return 이유 ) 권한 관리를 security 가 대신 해주기 때문에 편하라고 하는 것.
-            //JWT 토큰을 사용하는데 굳이 세션을 만들 필요가 없지만 권한 처리 때문에 넣음
-            return authentication;
-        }catch (IOException e){
-            e.printStackTrace();
+            // PrincipalDetailsService의 loadUserByUsername() 함수 실행
+            return authenticationManager.authenticate(authenticationToken);
+        } catch (IOException e) {
+            // IOException 발생 시 400 Bad Request 응답
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("application/json");
+            try (PrintWriter out = response.getWriter()) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "bad request");
+                out.print(objectMapper.writeValueAsString(errorResponse));
+                out.flush();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+            return null; // 인증 실패 처리
+        } catch (AuthenticationException e) {
+            // 인증 실패 시 401 Unauthorized 응답
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            try (PrintWriter out = response.getWriter()) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "email or password error.");
+                out.print(objectMapper.writeValueAsString(errorResponse));
+                out.flush();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+            throw e; // 인증 실패 시 예외 던지기
         }
-        return null;
     }
 
     //attemptAuthentication 실행 후 인증이 되었을 때 실행

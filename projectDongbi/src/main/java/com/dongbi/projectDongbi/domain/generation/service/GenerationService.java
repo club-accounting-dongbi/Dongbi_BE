@@ -6,6 +6,8 @@ import com.dongbi.projectDongbi.domain.clubmembers.ClubMember;
 import com.dongbi.projectDongbi.domain.clubmembers.repository.ClubMemberRepository;
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.domain.generation.repository.GenerationRepository;
+import com.dongbi.projectDongbi.domain.user.User;
+import com.dongbi.projectDongbi.domain.user.repository.UserRepository;
 import com.dongbi.projectDongbi.web.dto.generation.GenerationRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,11 +26,15 @@ public class GenerationService {
     private final GenerationRepository generationRepository;
     private final ClubMemberRepository clubMemberRepository;
     private final ClubService clubService;
+    private final UserRepository userRepository;
 
     @Transactional
-    public Generation createGeneration(GenerationRequestDto requestDto){
+    public Generation createGeneration(Long userId, GenerationRequestDto requestDto){
 
-        Club club = clubService.findClubById(requestDto.getClubId());
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+
+        Club club = user.getClub();
 
         Generation generation = new Generation().builder()
                 .name(requestDto.getName())
@@ -50,6 +57,8 @@ public class GenerationService {
 
         clubMemberRepository.saveAll(members);
 
+        club.addGeneration(generation);
+
         return generationRepository.save(generation);
     }
 
@@ -57,13 +66,19 @@ public class GenerationService {
         return generationRepository.findByClubMemberIdAndGenerationNum(clubId, generationNum);
     }
 
-    public Generation getGenerationByGenerationNum(Long generationNum){
-        return generationRepository.findGenerationByGenerationNum(generationNum);
+    public Generation getGenerationByGenerationNum(Long userId, Long generationNum) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+
+        return user.getClub().getGenerations().stream()
+                .filter(generation -> generation.getGenerationNum().equals(generationNum))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("해당 Generation을 찾을 수 없습니다."));
     }
 
     @Transactional
-    public Generation updateEndDate(Long generationNum, LocalDate endDate){
-        Generation generation = getGenerationByGenerationNum(generationNum);
+    public Generation updateEndDate(Long userId, Long generationNum, LocalDate endDate){
+        Generation generation = getGenerationByGenerationNum(userId, generationNum);
 
         if (endDate == null || endDate.isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("유효하지 않은 종료 날짜입니다.");
