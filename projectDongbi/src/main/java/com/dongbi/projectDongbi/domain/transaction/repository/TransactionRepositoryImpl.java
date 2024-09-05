@@ -80,6 +80,26 @@ public class TransactionRepositoryImpl implements TransactionCustomRepository{
 
     }
 
+    @Override
+    public List<TransactionBankingResponse> findAllTransaction(Long clubId, Long generationNum) {
+
+        return queryFactory.select( new QTransactionBankingResponse(
+                        transaction.deposit,
+                        transaction.withdrawal,
+                        transaction.occurrenceDate,
+                        transaction.occurrenceTime,
+                        transaction.personCharge,
+                        transaction.reason,
+                        transaction.cash,
+                        transaction.banking,
+                        transaction.imagePath
+
+                ))
+                .from(transaction)
+                .where(generation.generationNum.eq(generationNum).and(generation.club.id.eq(clubId)))
+                .fetch();
+    }
+
 
     private BooleanExpression searchReason(String searchName) {
         return StringUtils.hasText(searchName) ? transaction.reason.in("%"+searchName+"%") : null;

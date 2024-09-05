@@ -1,7 +1,5 @@
 package com.dongbi.projectDongbi.domain.common.file.service;
 
-import com.dongbi.projectDongbi.domain.common.file.File;
-import com.dongbi.projectDongbi.domain.common.file.repository.FileRepository;
 import com.dongbi.projectDongbi.web.transaction.dto.response.TransactionBankingResponse;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -16,71 +14,16 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class FileService {
-    private final FileRepository fileRepository;
 
-
-    @Value("${file.upload-dir}")
-    private String uploadDir;
-
-    public File saveFile(MultipartFile file) throws IOException{
-
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("File must not be null or empty");
-        }
-
-        Path directoryPath = Paths.get(uploadDir);
-        if(!Files.exists(directoryPath)){
-            Files.createDirectories(directoryPath);
-        }
-        String fileName = getFileName(file, directoryPath.toString());
-
-        Path filePath = directoryPath.resolve(fileName);
-        String standardizedFilePath = filePath.toString().replace("\\", "/");
-        Files.write(filePath, file.getBytes());
-
-        File uploadFile = new File(fileName, standardizedFilePath);
-
-        return fileRepository.save(uploadFile);
-    }
-
-    public Resource getFile(String filePath) throws  Exception{
-
-        File file = fileRepository.findByFilePath(filePath).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"파일경로를 찾을 수 없습니다."));
-        Path path = Paths.get(file.getFilePath());
-        if(!Files.exists(path)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "파일이 저장되어있지 않습니다.");
-        }
-
-        return new UrlResource(path.toUri());
-    }
-
-
-
-    private String getFileName(MultipartFile image, String imagePath) {
-        String originalFileName = image.getOriginalFilename();
-        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-
-        return  UUID.randomUUID() + extension;
-    }
 
     public byte[] generateExcel(Page<TransactionBankingResponse> responseData) throws IOException {
         Workbook workbook = new XSSFWorkbook();
@@ -128,7 +71,7 @@ public class FileService {
             Document document = new Document();
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
             document.open();
-            String fontFilePath = "C:\\Windows\\Fonts\\malgun.ttf";
+            String fontFilePath = "/font/malgun.ttf";
             BaseFont baseFont = BaseFont.createFont(fontFilePath, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
             Font fontTitle = new Font(baseFont,12);
             Font fondRows = new Font(baseFont,10);

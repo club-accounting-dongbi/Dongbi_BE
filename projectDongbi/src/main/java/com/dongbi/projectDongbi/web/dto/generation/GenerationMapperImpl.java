@@ -4,6 +4,7 @@ import com.dongbi.projectDongbi.domain.clubmembers.ClubMember;
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.domain.paid.Paid;
 import com.dongbi.projectDongbi.web.clubmembers.dto.response.ClubMemberResponse;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,17 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.dongbi.projectDongbi.domain.club.QClub.club;
+import static com.dongbi.projectDongbi.domain.clubmembers.QClubMember.clubMember;
+import static com.dongbi.projectDongbi.domain.generation.QGeneration.generation;
+
 @Component
 @RequiredArgsConstructor
 public class GenerationMapperImpl implements GenerationMapper{
     @Autowired
     private EntityManager em;
 
+    private final JPAQueryFactory queryFactory;
     @Override
     public GenerationResponseDto toResponseDto(Generation generation) {
         GenerationResponseDto responseDto = new GenerationResponseDto().builder()
@@ -41,6 +47,15 @@ public class GenerationMapperImpl implements GenerationMapper{
 
     }
 
+    @Override
+    public List<String> getNames(Long clubId, Long generationNum) {
+        return  queryFactory.select(clubMember.name)
+                .from(generation)
+                .join(generation.clubMembers, clubMember).on(clubMember.generation.generationNum.eq(generationNum))
+                .join(generation.club, club).on(club.id.eq(clubId))
+                .fetch();
+    }
+
     private List<ClubMemberResponse> toClubMemberResponseDtoList(List<ClubMember> members) {
         return members.stream()
                 .map(member ->{
@@ -48,7 +63,7 @@ public class GenerationMapperImpl implements GenerationMapper{
                             .name(member.getName())
                             .del_flag(member.getDelFlag())
                             .act_flag(member.getActFlag())
-                            .pay(toPaidResponseDtoList(member.getPay()))
+                            .pays(toPaidResponseDtoList(member.getPay()))
                             .build();
                     return memberDto;
                 })

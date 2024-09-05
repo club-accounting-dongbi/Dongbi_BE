@@ -25,8 +25,7 @@ public class ClubMember extends BaseEntity {
     @JoinColumn(name = "generation_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Generation generation;
 
-
-    @Column(name = "names", nullable = false, length = 10)
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
 
     @OneToMany(mappedBy = "paid", cascade =  CascadeType.ALL, orphanRemoval = true)
