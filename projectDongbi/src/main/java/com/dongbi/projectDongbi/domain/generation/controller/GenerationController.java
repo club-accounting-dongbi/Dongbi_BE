@@ -2,6 +2,7 @@ package com.dongbi.projectDongbi.domain.generation.controller;
 
 import com.dongbi.projectDongbi.domain.generation.Generation;
 import com.dongbi.projectDongbi.domain.generation.service.GenerationService;
+import com.dongbi.projectDongbi.global.common.response.ApiResponse;
 import com.dongbi.projectDongbi.security.config.jwt.JwtUtil;
 import com.dongbi.projectDongbi.web.dto.generation.GenerationMapper;
 import com.dongbi.projectDongbi.web.dto.generation.GenerationRequestDto;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,5 +52,18 @@ public class GenerationController {
         System.out.println("endDate = " + endDate);
         GenerationResponseDto collect = generationMapper.toResponseDto(generation);
         return ResponseEntity.ok(collect);
+    }
+
+    @GetMapping("/num/{clubId}")
+    public ResponseEntity<ApiResponse<List<Long>>> findGenerationNums(@PathVariable Long clubId){
+        List<Long> result = generationMapper.findGenerationNum(clubId);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+    @GetMapping("/members/{clubId}/{generationNum}")
+    public ResponseEntity<ApiResponse<List<String>>> findMembers(@PathVariable(name = "clubId") Long clubId,
+                                                                 @PathVariable(name = "generationNum") Long generationNum){
+        List<String> result = generationMapper.getNames(clubId,generationNum);
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 }
