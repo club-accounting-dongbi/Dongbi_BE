@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final GenerationService generationService;
+
 
 
     @Transactional
@@ -61,12 +63,17 @@ public class TransactionService {
     }
 
     @Transactional
-    public Long createWithdraw(WithDrawalRequest request, String filePath) {
+    public Long createWithdraw(WithDrawalRequest request,
+                               String filePath) {
         Generation generation = generationService.getGeneration(request.getClubId(), request.getGenerationNum());
 
         Transaction tr = Transaction.withdrawalTransaction(generation, request.getPrice(), request.getOccurenceDate(), request.getOccurenceTime(), request.getPersonCharge(), request.getReason(), generation.getAmount(), filePath);
         Transaction saved = transactionRepository.save(tr);
 
         return saved.getId();
+    }
+
+    public List<TransactionBankingResponse> getAllTransactionList(Long clubId, Long generationNum) {
+        return transactionRepository.findAllTransaction(clubId,generationNum);
     }
 }
