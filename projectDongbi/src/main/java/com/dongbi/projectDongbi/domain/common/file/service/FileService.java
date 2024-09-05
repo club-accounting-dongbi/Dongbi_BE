@@ -14,18 +14,18 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class FileService {
 
 
-    public byte[] generateExcel(Page<TransactionBankingResponse> responseData) throws IOException {
+    public byte[] generateExcel(List<TransactionBankingResponse> responseData) throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("입출금 내역");
 
@@ -39,7 +39,7 @@ public class FileService {
         headerRow.createCell(6).setCellValue("잔액");
 
         int rowNum = 1;
-        for(TransactionBankingResponse tr : responseData.getContent()){
+        for(TransactionBankingResponse tr : responseData){
             Row row = sheet.createRow(rowNum++);
             row.createCell(0).setCellValue(String.valueOf(tr.getOccurrenceDate()));
             row.createCell(1).setCellValue(String.valueOf(tr.getOccurrenceTime()));
@@ -63,7 +63,7 @@ public class FileService {
 
 
 
-    public byte[] generatePdf(Page<TransactionBankingResponse> responseData) throws IOException {
+    public byte[] generatePdf(List<TransactionBankingResponse> responseData) throws IOException {
 
 
         try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()){
@@ -95,7 +95,7 @@ public class FileService {
             table.addCell(new PdfPCell(new Paragraph("잔액", fontTitle)));
 
 
-            for (TransactionBankingResponse tr : responseData.getContent()) {
+            for (TransactionBankingResponse tr : responseData) {
                 table.addCell(new PdfPCell(new Paragraph(String.valueOf(tr.getOccurrenceDate()), fondRows)));
                 table.addCell(new PdfPCell(new Paragraph(String.valueOf(tr.getOccurrenceTime()), fondRows)));
                 table.addCell(new PdfPCell(new Paragraph(tr.getPersonCharge(), fondRows)));
