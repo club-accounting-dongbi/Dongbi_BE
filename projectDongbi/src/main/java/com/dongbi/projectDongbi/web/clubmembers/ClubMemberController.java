@@ -38,7 +38,6 @@ public class ClubMemberController {
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
-
     @Operation(summary = "동아리원 수정", description = "동아리원을 수정합니다.")
     @PatchMapping("update")
     public ResponseEntity<ApiResponse<Void>> updateClubMembers(@RequestBody List<UpdateClubMemberRequest> members){
